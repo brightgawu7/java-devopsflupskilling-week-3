@@ -6,7 +6,7 @@ pipeline{
 
   stage('bright'){
     steps{
-        bat "terraform"
+        bat "terraform --version"
     }
   } 
     }
