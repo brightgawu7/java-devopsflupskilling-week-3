@@ -15,7 +15,7 @@ resource "docker_image" "spring_boot_image" {
 }
 
 resource "docker_container" "spring_boot_image" {
-  name  = "bright_app"
+  name  = "terraform_app"
   image = docker_image.spring_boot_image.image_id
   ports {
     internal = 8081
