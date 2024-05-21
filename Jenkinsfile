@@ -1,41 +1,54 @@
-pipeline{
+pipeline {
     agent any
-       environment {
-            DOCKER_IMAGE_TAG = "latest"
-        }
-    stages{
-
-      
-  
-        
-
-    stage('terraform init && validate'){
-        
-        dir('./terraform'){
-           steps{
-                   bat 'terraform init'
-                   bat 'terraform validate'
-               }
-         }
+    environment {
+        DOCKER_IMAGE_TAG = "latest"
     }
-    
-    
-  
-      
-   
- 
-    }
-    
-    post {
-            success {
-                echo 'Everything works'
+    stages {
+        stage('maven package') {
+            steps {
+                bat './mvnw clean package'
             }
-            failure {
+        }
+        stage('docker build') {
+            steps {
+                bat "docker build -t brightedem/app:${DOCKER_IMAGE_TAG} . "
+            }
+        }
+        stage('docker push') {
+            steps {
                 script {
-                    currentBuild.result = 'FAILURE'
-                    echo 'Pipeline failed: ${currentBuild.result}'
-                    echo 'Details: Something went wrong'
+                    withDockerRegistry(credentialsId: 'dockerHub') {
+                        bat "docker push brightedem/app:${DOCKER_IMAGE_TAG}"
+                    }
                 }
             }
         }
+        stage('terraform init && validate') {
+            steps {
+                dir('./terraform') {
+                    bat 'terraform init'
+                    bat 'terraform validate'
+                }
+            }
+        }
+        stage('terraform apply') {
+            dir('./terraform') {
+                steps {
+                    bat 'terraform apply -auto-approve'
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Everything works'
+        }
+        failure {
+            script {
+                currentBuild.result = 'FAILURE'
+                echo 'Pipeline failed: ${currentBuild.result}'
+                echo 'Details: Something went wrong'
+            }
+        }
+    }
 }
