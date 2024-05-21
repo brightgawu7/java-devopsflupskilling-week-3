@@ -5,37 +5,21 @@ pipeline{
         }
     stages{
 
-        stage('maven package'){
-             steps{
-               bat './mvnw clean package'
-             }
-        } 
-        stage('docker build'){
-              steps{
-                 bat "docker build -t brightedem/app:${DOCKER_IMAGE_TAG} . " 
-              }
-        }   
-        stage('docker push'){
-              steps{
-
-                 script{
-                         withDockerRegistry(credentialsId: 'dockerHub') {
-                            bat "docker push brightedem/app:${DOCKER_IMAGE_TAG}" 
-                        }
-                 }
-
-              }
-        }    
+      
+  
+        
 
     stage('terraform init && validate'){
         
         dir('./terraform'){
            steps{
                    bat 'terraform init'
-                    bat 'terraform validate'
+                   bat 'terraform validate'
                }
          }
     }
+    
+    
     stage('terraform apply'){
          
         dir('./terraform'){
