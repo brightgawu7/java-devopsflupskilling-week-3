@@ -1,14 +1,33 @@
-def dockerComposeFile = 'docker-compose.yml'
-
 pipeline{
     agent any
+       environment {
+            DOCKER_IMAGE_TAG = "latest"
+        }
     stages{
 
-  stage('bright'){
-    steps{
-        bat "terraform --version"
-    }
-  } 
+        stage('maven package'){
+             steps{
+               bat './mvnw clean package'
+             }
+        } 
+      
+   
+        stage('docker build'){
+             steps{
+            bat "docker build -t brightedem/app:${DOCKER_IMAGE_TAG} . " 
+              }
+        }   
+            stage('docker push'){
+                     steps{
+                      
+                      script{
+                      withDockerRegistry(credentialsId: 'dockerHub') {
+                       bat "docker push brightedem/app:${DOCKER_IMAGE_TAG}" 
+                      }
+                      }
+                      
+                      }
+                }     
     }
     
     post {
