@@ -11,11 +11,11 @@ pipeline{
              }
         } 
      
-     stage('run terraform'){
-        steps{
-        dir('./terraform'){
-        bat 'terraform init'
-        }
+    dir('./terraform'){
+        stage('run terraform'){
+            steps{
+                bat 'terraform init'
+            }
         }
      } 
    
