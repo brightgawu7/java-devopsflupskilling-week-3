@@ -11,13 +11,25 @@ pipeline{
              }
         } 
      
-    dir('./terraform'){
-        stage('run terraform'){
+
+    stage('terraform init && validate'){
+        
+        dir('./terraform'){
+           steps{
+                   bat 'terraform init'
+                    bat 'terraform validate'
+               }
+         }
+    }
+    stage('terraform apply'){
+         
+        dir('./terraform'){
             steps{
-                bat 'terraform init'
-            }
-        }
-     } 
+                    bat 'terraform apply -auto-approve'
+                   }
+               }
+         }
+      
    
 //         stage('docker build'){
 //              steps{

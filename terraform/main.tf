@@ -11,11 +11,11 @@ terraform {
 provider "docker" {}
 
 resource "docker_image" "spring_boot_image" {
-  name = "brightedem/app:v1.0"
+  name = "brightedem/app:latest"
 }
 
 resource "docker_container" "spring_boot_image" {
-  name = "bright_app"
+  name  = "bright_app"
   image = docker_image.spring_boot_image.image_id
   ports {
     internal = 8081
