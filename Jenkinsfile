@@ -20,14 +20,7 @@ pipeline{
     }
     
     
-    stage('terraform apply'){
-         
-        dir('./terraform'){
-            steps{
-                    bat 'terraform apply -auto-approve'
-                   }
-               }
-         }
+  
       
    
  
